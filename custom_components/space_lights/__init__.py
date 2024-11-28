@@ -1,0 +1,1 @@
+"""Initialize the My RGB Lights component."""
