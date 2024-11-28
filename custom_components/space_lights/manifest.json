@@ -5,8 +5,8 @@
     "issue_tracker": "https://github.com/LAB271/ha-space-lights/issues",
     "iot_class": "local_polling",
     "dependencies": [],
-    "version": "0.0.1",
-    "config_flow": false,
+    "version": "0.0.2",
+    "config_flow": true,
     "requirements": [],
     "codeowners": ["@LAB271"]
 }
