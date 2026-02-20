@@ -1,1 +1,0 @@
-DOMAIN = "space_lights"

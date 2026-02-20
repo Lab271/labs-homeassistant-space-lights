@@ -1,23 +1,20 @@
 from .const import DOMAIN
-import homeassistant.helpers.config_validation as cv
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from typing import Any
 
 # Pre-import platforms to avoid blocking calls
 from . import light, number
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Set up Space Lights from a config entry."""
-    name = entry.data["name"]
-    host = entry.data["host"]
-
-    # Store data in hass
+    """Set up Enttec LED Mapper from a config entry."""
     hass.data.setdefault(DOMAIN, {})
-    hass.data[DOMAIN][entry.entry_id] = {"name": name, "host": host}
+    hass.data[DOMAIN][entry.entry_id] = {
+        "name": entry.data["name"],
+        "host": entry.data["host"],
+        "stage": entry.data["stage"],
+    }
 
-    # Forward entry setups for platforms (light and number)
     await hass.config_entries.async_forward_entry_setups(entry, ["light", "number"])
     return True
 
