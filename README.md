@@ -21,7 +21,7 @@ This repo was previously named `ha-space-lights`. It was renamed to `labs-homeas
 
 **Out of scope:**
 
-- Direct Art-Net / sACN output — the ELM does the pixel mapping. See `labs-artnet` for the upstream Art-Net controller.
+- Direct Art-Net / sACN output — the ELM does the pixel mapping. See [`artnet-relay`](https://github.com/Lab271/artnet-relay) for the upstream Art-Net controller.
 - Fixture-level addressing — entities are per stage, not per pixel.
 - Audio / video routing — see the audio and videowall repos.
 
