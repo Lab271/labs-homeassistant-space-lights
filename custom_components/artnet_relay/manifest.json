@@ -1,11 +1,11 @@
 {
-    "domain": "enttec_led_mapper",
-    "name": "Enttec LED Mapper",
+    "domain": "artnet_relay",
+    "name": "Art-Net Relay",
     "documentation": "https://github.com/LAB271/labs-homeassistant-space-lights/",
     "issue_tracker": "https://github.com/LAB271/labs-homeassistant-space-lights/issues",
     "iot_class": "local_polling",
     "dependencies": [],
-    "version": "0.0.2",
+    "version": "0.0.3",
     "config_flow": true,
     "requirements": [],
     "codeowners": ["@LAB271"]

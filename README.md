@@ -1,50 +1,58 @@
 # labs-homeassistant-space-lights
 
-Home Assistant custom integration that maps stage groups on an [Enttec LED Mapper](https://www.enttec.com/) to Home Assistant `light` entities. Runs on the Lab271 Home Assistant instance and is also installable via HACS.
+Home Assistant custom integration that drives RGB lighting installations through the Lab271 [Art-Net Relay](https://github.com/Lab271/artnet-relay) REST API. Runs on the Lab271 Home Assistant instance and is also installable via HACS.
 
 ## Status
 
-WIP. Drives the Lab271 stage strips today; HA UI exposes RGB color, brightness, and a curated set of ELM media effects.
+Active. Drives a Lab271 Art-Net Relay over its REST API. One whole-relay `light` entity per config entry (RGB color, brightness, transition); on/off both go through `POST /all`. Per-strip / per-group addressing and effects (`POST /effects/{name}`) are not wired up yet — the relay does not currently expose a discovery endpoint for those.
 
 ## Rename history
 
-This repo was previously named `ha-space-lights`. It was renamed to `labs-homeassistant-space-lights` to match the [Lab271 naming convention](https://github.com/LAB271/labs-infra-overview/blob/main/CONVENTIONS.md) (`labs-homeassistant-<thing>`). The integration domain was also renamed from its initial value to `enttec_led_mapper` so it groups with the device that actually drives the lights; this is a breaking change for any existing HA config entries under the old domain (remove and re-add the integration).
+This repo was previously named `ha-space-lights` and was renamed to `labs-homeassistant-space-lights` to match the [Lab271 naming convention](https://github.com/LAB271/labs-infra-overview/blob/main/CONVENTIONS.md) (`labs-homeassistant-<thing>`).
+
+The HA integration domain has also been renamed twice. Each domain rename is a breaking change for existing HA config entries (remove and re-add the integration after upgrading):
+
+| Old domain | New domain | Reason |
+| --- | --- | --- |
+| (initial) | `enttec_led_mapper` | grouped the integration with the device that drove the lights |
+| `enttec_led_mapper` | `artnet_relay` | reflects the upstream service the integration now talks to (the Art-Net Relay REST API) |
 
 ## Scope
 
 **In scope:**
 
-- Home Assistant custom component for ELM stages exposed over HTTP.
-- One `light` entity per configured stage (RGB, brightness, effects).
-- A `number` platform for any continuous parameters surfaced by the stage.
-- Per-stage config flow (host + friendly name + ELM stage slug).
+- Home Assistant custom component that talks to a Lab271 Art-Net Relay endpoint over HTTP.
+- One `light` entity per configured relay instance (RGB, brightness, transition).
+- Per-instance config flow (host + port + friendly name).
 
 **Out of scope:**
 
-- Direct Art-Net / sACN output — the ELM does the pixel mapping. See [`artnet-relay`](https://github.com/Lab271/artnet-relay) for the upstream Art-Net controller.
-- Fixture-level addressing — entities are per stage, not per pixel.
+- Direct Art-Net / sACN output — the relay does the pixel mapping. See [`artnet-relay`](https://github.com/Lab271/artnet-relay) for the upstream controller.
+- Fixture-level addressing — entities are per relay instance, not per pixel.
 - Audio / video routing — see the audio and videowall repos.
 
 ## Quick start
 
-Install via HACS as a custom repository (point HACS at this repo URL), or copy `custom_components/enttec_led_mapper/` into your Home Assistant `config/custom_components/` directory and restart. Then add the integration from **Settings → Devices & Services → Add Integration → Enttec LED Mapper** and enter:
+Install via HACS as a custom repository — in HACS → Integrations → ⋮ → *Custom repositories*, add this repo's URL with category *Integration*. Then install the **Art-Net Relay** integration and restart Home Assistant. Alternatively, copy `custom_components/artnet_relay/` into your Home Assistant `config/custom_components/` directory and restart.
 
-- **Host** — the ELM's IP or hostname.
+Add the integration from **Settings → Devices & Services → Add Integration → Art-Net Relay** and enter:
+
+- **Host** — the Art-Net Relay's IP or hostname.
+- **Port** — the HTTP port the relay listens on (default `80`).
 - **Name** — friendly name for the resulting light entity.
-- **Stage** — the ELM stage slug (the path component used in `/elm/stages/<stage>/live`).
 
 ## Inventory / targets
 
-Enttec LED Mapper on the Lab271 AV network, driving the lab's stage LED strips. Hosts are configured per-instance via the HA UI.
+Lab271 Art-Net Relay instances driving the lab's RGB LED strips. Hosts and ports are configured per-instance via the HA UI.
 
 ## Naming
 
-Hostnames for the HA host and any networked Enttec controller follow the [Lab271 naming convention](https://github.com/Lab271/labs-infra-overview/blob/main/naming.md). The HA host itself uses `homeassistant` as a grandfathered exception per HA's own default.
+Hostnames for the HA host and any networked Art-Net Relay follow the [Lab271 naming convention](https://github.com/Lab271/labs-infra-overview/blob/main/naming.md). The HA host itself uses `homeassistant` as a grandfathered exception per HA's own default.
 
 ## Dependencies
 
 - Home Assistant 2024.x or newer (config flow + `async_forward_entry_setups`).
-- Network reachability from the HA host to the ELM over HTTP.
+- A reachable [Art-Net Relay](https://github.com/Lab271/artnet-relay) endpoint on the configured `host:port`.
 - No external secrets or API tokens.
 
 ## Owner

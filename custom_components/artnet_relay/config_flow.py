@@ -1,10 +1,10 @@
 import voluptuous as vol
 from homeassistant import config_entries
-from homeassistant.const import CONF_HOST, CONF_NAME
-from .const import DOMAIN, CONF_STAGE
+from homeassistant.const import CONF_HOST, CONF_NAME, CONF_PORT
+from .const import DOMAIN
 
 class SpaceLightsConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    """Handle a config flow for Enttec LED Mapper."""
+    """Handle a config flow for Space Lights."""
 
     VERSION = 1
 
@@ -17,7 +17,7 @@ class SpaceLightsConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=vol.Schema({
                 vol.Required(CONF_HOST, default="192.0.2.20"): str,
+                vol.Required(CONF_PORT, default=80): int,
                 vol.Required(CONF_NAME, default="Space Light"): str,
-                vol.Required(CONF_STAGE, default="labs_strips"): str,
             })
         )
