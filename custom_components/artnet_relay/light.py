@@ -7,6 +7,7 @@ import aiohttp
 
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS,
+    ATTR_EFFECT,
     ATTR_RGB_COLOR,
     ATTR_TRANSITION,
     ColorMode,
@@ -20,6 +21,8 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
+
+EFFECTS = ["rainbow", "chase", "breathe", "strobe", "police", "fire", "sparkle", "wave"]
 
 
 async def async_setup_entry(
@@ -40,7 +43,8 @@ class ArtnetRelayLight(LightEntity):
     _attr_assumed_state = True
     _attr_color_mode = ColorMode.RGB
     _attr_supported_color_modes = {ColorMode.RGB}
-    _attr_supported_features = LightEntityFeature.TRANSITION
+    _attr_supported_features = LightEntityFeature.TRANSITION | LightEntityFeature.EFFECT
+    _attr_effect_list = EFFECTS
 
     def __init__(self, hass: HomeAssistant, name: str, host: str, port: int) -> None:
         self._hass = hass
@@ -51,6 +55,7 @@ class ArtnetRelayLight(LightEntity):
         self._attr_is_on = False
         self._attr_brightness = 255
         self._attr_rgb_color = (255, 255, 255)
+        self._attr_effect = None
 
     @property
     def device_info(self) -> dict[str, Any]:
@@ -66,7 +71,7 @@ class ArtnetRelayLight(LightEntity):
         return f"http://{self._host}:{self._port}"
 
     async def async_turn_on(self, **kwargs: Any) -> None:
-        """Turn the lights on, applying any color/brightness/transition kwargs."""
+        """Turn the lights on, applying any color/brightness/transition/effect kwargs."""
         if ATTR_RGB_COLOR in kwargs:
             self._attr_rgb_color = tuple(kwargs[ATTR_RGB_COLOR])
         if ATTR_BRIGHTNESS in kwargs:
@@ -78,10 +83,20 @@ class ArtnetRelayLight(LightEntity):
             "b": self._attr_rgb_color[2],
             "brightness": (self._attr_brightness or 255) / 255,
         }
+
+        if ATTR_EFFECT in kwargs and kwargs[ATTR_EFFECT] in EFFECTS:
+            effect = kwargs[ATTR_EFFECT]
+            if await self._post(f"/effects/{effect}", json=body):
+                self._attr_effect = effect
+                self._attr_is_on = True
+                self.async_write_ha_state()
+            return
+
         if ATTR_TRANSITION in kwargs:
             body["transition_ms"] = int(kwargs[ATTR_TRANSITION] * 1000)
 
         if await self._post("/all", json=body):
+            self._attr_effect = None
             self._attr_is_on = True
             self.async_write_ha_state()
 
@@ -97,6 +112,7 @@ class ArtnetRelayLight(LightEntity):
             body["transition_ms"] = int(kwargs[ATTR_TRANSITION] * 1000)
 
         if await self._post("/all", json=body):
+            self._attr_effect = None
             self._attr_is_on = False
             self.async_write_ha_state()
 
