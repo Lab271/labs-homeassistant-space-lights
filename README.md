@@ -1,6 +1,6 @@
 # labs-homeassistant-space-lights
 
-Home Assistant custom integration that drives RGB lighting installations through the Lab271 [Art-Net Relay](https://github.com/Lab271/artnet-relay) REST API. Runs on the Lab271 Home Assistant instance and is also installable via HACS.
+Home Assistant custom integration that drives RGB lighting installations through the Lab271 [Art-Net Relay](https://github.com/Lab271/labs-artnet-relay) REST API. Runs on the Lab271 Home Assistant instance and is also installable via HACS.
 
 ## Status
 
@@ -27,7 +27,7 @@ The HA integration domain has also been renamed twice. Each domain rename is a b
 
 **Out of scope:**
 
-- Direct Art-Net / sACN output — the relay does the pixel mapping. See [`artnet-relay`](https://github.com/Lab271/artnet-relay) for the upstream controller.
+- Direct Art-Net / sACN output — the relay does the pixel mapping. See [`labs-artnet-relay`](https://github.com/Lab271/labs-artnet-relay) for the upstream controller.
 - Fixture-level addressing — entities are per relay instance, not per pixel.
 - Audio / video routing — see the audio and videowall repos.
 
@@ -52,7 +52,7 @@ Hostnames for the HA host and any networked Art-Net Relay follow the [Lab271 nam
 ## Dependencies
 
 - Home Assistant 2024.x or newer (config flow + `async_forward_entry_setups`).
-- A reachable [Art-Net Relay](https://github.com/Lab271/artnet-relay) endpoint on the configured `host:port`.
+- A reachable [Art-Net Relay](https://github.com/Lab271/labs-artnet-relay) endpoint on the configured `host:port`.
 - No external secrets or API tokens.
 
 ## Owner
