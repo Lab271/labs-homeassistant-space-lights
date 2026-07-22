@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2024-2026 Schuberg Philis / Lab271
 """Validate the integration manifest(s) — catches the breakage that hassfest
 and HACS validation would reject. Pure JSON checks, no Home Assistant import.
 """
