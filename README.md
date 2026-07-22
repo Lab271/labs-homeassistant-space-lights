@@ -58,3 +58,7 @@ Hostnames for the HA host and any networked Art-Net Relay follow the [Lab271 nam
 ## Owner
 
 [`@LAB271`](.github/CODEOWNERS).
+
+## License
+
+Licensed under the [Apache License 2.0](LICENSE). Copyright © 2024-2026 Schuberg Philis / Lab271. See [NOTICE](NOTICE).
