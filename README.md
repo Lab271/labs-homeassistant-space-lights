@@ -57,7 +57,7 @@ Hostnames for the HA host and any networked Art-Net Relay follow the [Lab271 nam
 
 ## Owner
 
-[`@LAB271`](.github/CODEOWNERS).
+[@LAB271](https://github.com/orgs/Lab271/people).
 
 ## License
 
