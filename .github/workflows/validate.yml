@@ -6,6 +6,10 @@
 # action mirrors what HACS checks before listing a repo; running both on every
 # push plus weekly catches drift before a release goes out. The unit tests in
 # ci.yml stay separate - these two jobs pull external actions, those don't.
+#
+# The org requires every action pinned to a full-length SHA, so the upstream
+# `@master` / `@main` refs these two are normally used with are rejected.
+# Dependabot moves the pins; the trailing comment records what each SHA was.
 name: Validate
 
 on:
@@ -26,13 +30,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-      - uses: home-assistant/actions/hassfest@master
+      - uses: home-assistant/actions/hassfest@ab22029681aa532bfe7de5774a9972d67bfbd2c0 # master
 
   hacs:
     name: HACS
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-      - uses: hacs/action@main
+      - uses: hacs/action@d556e736723344f83838d08488c983a15381059a # 22.5.0
         with:
           category: integration
