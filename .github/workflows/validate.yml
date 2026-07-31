@@ -1,0 +1,38 @@
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2024-2026 Schuberg Philis / Lab271
+#
+# HACS installs from GitHub Releases, so a bad manifest only surfaces at install
+# time for users. hassfest is Home Assistant's own manifest linter and the HACS
+# action mirrors what HACS checks before listing a repo; running both on every
+# push plus weekly catches drift before a release goes out. The unit tests in
+# ci.yml stay separate - these two jobs pull external actions, those don't.
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hassfest:
+    name: hassfest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: home-assistant/actions/hassfest@master
+
+  hacs:
+    name: HACS
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: hacs/action@main
+        with:
+          category: integration
