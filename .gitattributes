@@ -1,2 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Brand assets are binary - never line-ending normalize them
+*.png binary
