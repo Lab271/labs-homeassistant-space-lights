@@ -23,10 +23,199 @@
                 }
             }
         },
+        "/setup": {
+            "get": {
+                "summary": "Setup Page",
+                "operationId": "setup_page_setup_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "text/html": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/info": {
             "get": {
                 "summary": "Info",
                 "operationId": "info_info_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/effects": {
+            "get": {
+                "summary": "List Effects",
+                "description": "Effect names with their tunable params and defaults, read off the signatures.\n\nLets the UI build the right controls per effect (a direction dial for\nspatial effects, an origin picker for ripple) without hardcoding a table.",
+                "operationId": "list_effects_effects_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/layout": {
+            "get": {
+                "summary": "Get Layout",
+                "operationId": "get_layout_layout_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "Put Layout",
+                "description": "Save strip placements to config.yaml and rebuild geometry live.\n\nDMX addressing is untouched, so this does not restart the Art-Net nodes \u2014\nthe rig keeps running while you drag strips around. A running spatial\neffect is restarted so it picks up the new positions.",
+                "operationId": "put_layout_layout_put",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LayoutRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Clear Layout",
+                "description": "Drop all placements and fall back to the auto-arranged default.",
+                "operationId": "clear_layout_layout_delete",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/config": {
+            "get": {
+                "summary": "Get Config",
+                "description": "Return the full current config as JSON (for the config app).",
+                "operationId": "get_config_config_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "Put Config",
+                "description": "Validate a new config, write it to config.yaml, and reload the controller live.",
+                "operationId": "put_config_config_put",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "additionalProperties": true,
+                                "type": "object",
+                                "title": "Payload"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/config/reload": {
+            "post": {
+                "summary": "Post Config Reload",
+                "description": "Re-read config.yaml from disk and restart the controller.",
+                "operationId": "post_config_reload_config_reload_post",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/system/interfaces": {
+            "get": {
+                "summary": "System Interfaces",
+                "description": "List host network interfaces with IPv4 addresses, for the source_ip picker.",
+                "operationId": "system_interfaces_system_interfaces_get",
                 "responses": {
                     "200": {
                         "description": "Successful Response",
@@ -378,6 +567,212 @@
                 }
             }
         },
+        "/strips/{name}/pixels": {
+            "post": {
+                "summary": "Set Strip Pixels",
+                "description": "Set a strip pixel by pixel \u2014 one half red and one half blue, say.",
+                "operationId": "set_strip_pixels_strips__name__pixels_post",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Name"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PixelsRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/identify/{name}": {
+            "post": {
+                "summary": "Identify Strip",
+                "description": "Solo one strip so you can see which physical fixture it is.",
+                "operationId": "identify_strip_identify__name__post",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Name"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "anyOf": [
+                                    {
+                                        "$ref": "#/components/schemas/IdentifyRequest"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "title": "Req"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/identify": {
+            "delete": {
+                "summary": "Identify Clear",
+                "description": "Leave identify mode and restore the stage as it was.",
+                "operationId": "identify_clear_identify_delete",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/field/params": {
+            "post": {
+                "summary": "Patch Field Params",
+                "description": "Nudge the live field \u2014 used by the UI to drag the spot around.",
+                "operationId": "patch_field_params_field_params_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/FieldParamsRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/field": {
+            "get": {
+                "summary": "Get Field",
+                "description": "Render the running field to a small grid.\n\nLets the UI show the actual picture the LEDs are sampling, rather than\ninferring it from the strip colours.",
+                "operationId": "get_field_field_get",
+                "parameters": [
+                    {
+                        "name": "w",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 48,
+                            "title": "W"
+                        }
+                    },
+                    {
+                        "name": "h",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 32,
+                            "title": "H"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/stop": {
             "post": {
                 "summary": "Stop Effect",
@@ -532,10 +927,285 @@
                             }
                         ],
                         "title": "Step Ms"
+                    },
+                    "direction": {
+                        "anyOf": [
+                            {
+                                "type": "number",
+                                "maximum": 360.0,
+                                "minimum": -360.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Direction"
+                    },
+                    "wavelength": {
+                        "anyOf": [
+                            {
+                                "type": "number",
+                                "maximum": 10.0,
+                                "exclusiveMinimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Wavelength"
+                    },
+                    "spread": {
+                        "anyOf": [
+                            {
+                                "type": "number",
+                                "maximum": 10.0,
+                                "exclusiveMinimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Spread"
+                    },
+                    "tail": {
+                        "anyOf": [
+                            {
+                                "type": "number",
+                                "maximum": 2.0,
+                                "exclusiveMinimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Tail"
+                    },
+                    "scale": {
+                        "anyOf": [
+                            {
+                                "type": "number",
+                                "maximum": 10.0,
+                                "exclusiveMinimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Scale"
+                    },
+                    "x": {
+                        "anyOf": [
+                            {
+                                "type": "number",
+                                "maximum": 1.0,
+                                "minimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "X"
+                    },
+                    "y": {
+                        "anyOf": [
+                            {
+                                "type": "number",
+                                "maximum": 1.0,
+                                "minimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Y"
+                    },
+                    "density": {
+                        "anyOf": [
+                            {
+                                "type": "number",
+                                "maximum": 1.0,
+                                "exclusiveMinimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Density"
+                    },
+                    "decay_ms": {
+                        "anyOf": [
+                            {
+                                "type": "integer",
+                                "maximum": 10000.0,
+                                "minimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Decay Ms"
+                    },
+                    "intensity": {
+                        "anyOf": [
+                            {
+                                "type": "number",
+                                "maximum": 1.0,
+                                "minimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Intensity"
+                    },
+                    "hue_drift": {
+                        "anyOf": [
+                            {
+                                "type": "number",
+                                "maximum": 2.0,
+                                "minimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Hue Drift"
+                    },
+                    "cx": {
+                        "anyOf": [
+                            {
+                                "type": "number",
+                                "maximum": 1.0,
+                                "minimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Cx"
+                    },
+                    "cy": {
+                        "anyOf": [
+                            {
+                                "type": "number",
+                                "maximum": 1.0,
+                                "minimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Cy"
+                    },
+                    "diameter": {
+                        "anyOf": [
+                            {
+                                "type": "number",
+                                "maximum": 3.0,
+                                "exclusiveMinimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Diameter"
+                    },
+                    "softness": {
+                        "anyOf": [
+                            {
+                                "type": "number",
+                                "maximum": 1.0,
+                                "minimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Softness"
+                    },
+                    "rings": {
+                        "anyOf": [
+                            {
+                                "type": "number",
+                                "maximum": 30.0,
+                                "minimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Rings"
+                    },
+                    "arms": {
+                        "anyOf": [
+                            {
+                                "type": "number",
+                                "maximum": 16.0,
+                                "minimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Arms"
+                    },
+                    "count": {
+                        "anyOf": [
+                            {
+                                "type": "number",
+                                "maximum": 12.0,
+                                "minimum": 1.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Count"
+                    },
+                    "size": {
+                        "anyOf": [
+                            {
+                                "type": "number",
+                                "maximum": 1.0,
+                                "exclusiveMinimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Size"
+                    },
+                    "width": {
+                        "anyOf": [
+                            {
+                                "type": "number",
+                                "maximum": 1.0,
+                                "exclusiveMinimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Width"
                     }
                 },
                 "type": "object",
                 "title": "EffectRequest"
+            },
+            "FieldParamsRequest": {
+                "properties": {
+                    "params": {
+                        "additionalProperties": true,
+                        "type": "object",
+                        "title": "Params"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "params"
+                ],
+                "title": "FieldParamsRequest",
+                "description": "Partial update of the running field's parameters."
             },
             "HTTPValidationError": {
                 "properties": {
@@ -549,6 +1219,178 @@
                 },
                 "type": "object",
                 "title": "HTTPValidationError"
+            },
+            "IdentifyRequest": {
+                "properties": {
+                    "r": {
+                        "type": "integer",
+                        "maximum": 255.0,
+                        "minimum": 0.0,
+                        "title": "R",
+                        "default": 255
+                    },
+                    "g": {
+                        "type": "integer",
+                        "maximum": 255.0,
+                        "minimum": 0.0,
+                        "title": "G",
+                        "default": 255
+                    },
+                    "b": {
+                        "type": "integer",
+                        "maximum": 255.0,
+                        "minimum": 0.0,
+                        "title": "B",
+                        "default": 255
+                    },
+                    "two_tone": {
+                        "type": "boolean",
+                        "title": "Two Tone",
+                        "default": true
+                    }
+                },
+                "type": "object",
+                "title": "IdentifyRequest"
+            },
+            "LayoutRequest": {
+                "properties": {
+                    "units": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Units"
+                    },
+                    "width": {
+                        "anyOf": [
+                            {
+                                "type": "number",
+                                "exclusiveMinimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Width"
+                    },
+                    "height": {
+                        "anyOf": [
+                            {
+                                "type": "number",
+                                "exclusiveMinimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Height"
+                    },
+                    "background": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Background"
+                    },
+                    "videowall": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Videowall"
+                    },
+                    "strips": {
+                        "items": {
+                            "$ref": "#/components/schemas/StripPlacement"
+                        },
+                        "type": "array",
+                        "title": "Strips"
+                    }
+                },
+                "type": "object",
+                "title": "LayoutRequest",
+                "description": "Full replacement of the physical layout."
+            },
+            "PixelsRequest": {
+                "properties": {
+                    "pixels": {
+                        "items": {
+                            "items": {
+                                "type": "integer"
+                            },
+                            "type": "array"
+                        },
+                        "type": "array",
+                        "minItems": 1,
+                        "title": "Pixels"
+                    },
+                    "brightness": {
+                        "type": "number",
+                        "maximum": 1.0,
+                        "minimum": 0.0,
+                        "title": "Brightness",
+                        "default": 1.0
+                    },
+                    "transition_ms": {
+                        "type": "integer",
+                        "maximum": 60000.0,
+                        "minimum": 0.0,
+                        "title": "Transition Ms",
+                        "default": 300
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "pixels"
+                ],
+                "title": "PixelsRequest",
+                "description": "Per-pixel colours, pixel 1 first.\n\nShort lists repeat across the strip, so `[[255,0,0],[0,0,255]]` alternates\nand a two-element list on an 8-pixel strip gives a 4/4 split... use\n`[[255,0,0]]*4 + [[0,0,255]]*4` for one half red, one half blue."
+            },
+            "StripPlacement": {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "title": "Name"
+                    },
+                    "x": {
+                        "type": "number",
+                        "title": "X"
+                    },
+                    "y": {
+                        "type": "number",
+                        "title": "Y"
+                    },
+                    "angle": {
+                        "type": "number",
+                        "title": "Angle",
+                        "default": 0.0
+                    },
+                    "length": {
+                        "type": "number",
+                        "exclusiveMinimum": 0.0,
+                        "title": "Length",
+                        "default": 1.0
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "name",
+                    "x",
+                    "y"
+                ],
+                "title": "StripPlacement"
             },
             "ValidationError": {
                 "properties": {

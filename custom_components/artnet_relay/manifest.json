@@ -1,7 +1,9 @@
 {
   "domain": "artnet_relay",
   "name": "Art-Net Relay",
-  "codeowners": ["@LAB271"],
+  "codeowners": [
+    "@LAB271"
+  ],
   "config_flow": true,
   "dependencies": [],
   "documentation": "https://github.com/LAB271/labs-homeassistant-space-lights/",
@@ -9,5 +11,5 @@
   "iot_class": "local_push",
   "issue_tracker": "https://github.com/LAB271/labs-homeassistant-space-lights/issues",
   "requirements": [],
-  "version": "0.1.0"
+  "version": "0.2.0"
 }
