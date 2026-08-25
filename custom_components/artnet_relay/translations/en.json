@@ -1,0 +1,38 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Art-Net Relay",
+        "description": "Point Home Assistant at a running artnet-relay instance.",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "name": "Name"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "This relay is already configured."
+    }
+  },
+  "services": {
+    "start_effect": {
+      "name": "Start effect",
+      "description": "Start an Art-Net Relay effect with explicit parameters.",
+      "fields": {
+        "effect": {
+          "name": "Effect",
+          "description": "Effect name as reported by the relay's /effects endpoint."
+        },
+        "params": {
+          "name": "Parameters",
+          "description": "Effect parameters passed through to the relay; which ones apply depends on the effect."
+        }
+      }
+    },
+    "stop_effect": {
+      "name": "Stop effect",
+      "description": "Stop the running effect and leave the strips where they are."
+    }
+  }
+}

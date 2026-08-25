@@ -1,0 +1,37 @@
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2024-2026 Schuberg Philis / Lab271
+start_effect:
+  name: Start effect
+  description: >-
+    Start an Art-Net Relay effect with explicit parameters. Effects run
+    relay-wide, so target the whole-relay light.
+  target:
+    entity:
+      integration: artnet_relay
+      domain: light
+  fields:
+    effect:
+      name: Effect
+      description: Effect name as reported by the relay's /effects endpoint.
+      required: true
+      example: aurora
+      selector:
+        text:
+    params:
+      name: Parameters
+      description: >-
+        Effect parameters, passed through to the relay. Which ones apply
+        depends on the effect (for example direction and spread for rainbow,
+        x/y and diameter for spot); the relay ignores the rest.
+      required: false
+      example: '{"direction": 90, "spread": 2.5}'
+      selector:
+        object:
+
+stop_effect:
+  name: Stop effect
+  description: Stop the running effect and leave the strips where they are.
+  target:
+    entity:
+      integration: artnet_relay
+      domain: light
